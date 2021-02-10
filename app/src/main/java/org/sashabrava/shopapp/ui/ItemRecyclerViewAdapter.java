@@ -2,6 +2,7 @@ package org.sashabrava.shopapp.ui;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,7 +53,7 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
                 //itemsRequest.request();
                 //itemsRequest.singleItem();
                 try {
-                    itemsRequest.templateRequest("api/check-alive", v, ItemsRequest.class.getMethod("checkServerAlive", JSONObject.class ));
+                    itemsRequest.templateRequest("api/check-alive", ItemsRequest.class.getMethod("checkServerAlive", JSONObject.class ));
                 } catch (NoSuchMethodException e) {
                     e.printStackTrace();
                 }

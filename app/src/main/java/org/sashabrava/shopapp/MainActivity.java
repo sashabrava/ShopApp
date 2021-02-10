@@ -1,23 +1,27 @@
 package org.sashabrava.shopapp;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Menu;
-import android.widget.Button;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.navigation.NavigationView;
-
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
+
+import org.json.JSONObject;
+import org.sashabrava.shopapp.server.ItemsRequest;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,12 +34,18 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+        fab.setOnClickListener(view -> {
+            ItemsRequest itemsRequest = ItemsRequest.getInstance(view.getContext());
+            try {
+                itemsRequest.templateRequest(
+                        "api/check-alive",
+                        ItemsRequest.class.getMethod("checkServerAlive", JSONObject.class),
+                        view,
+                        MainActivity.class.getMethod("fabGreen", View.class),
+                        MainActivity.class.getMethod("fabRed", View.class)
+                );
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
             }
         });
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -69,15 +79,25 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                Intent myIntent = new Intent(MainActivity.this, SettingsActivity.class);
-                MainActivity.this.startActivity(myIntent);
-                /*Snackbar.make(getWindow().getDecorView().findViewById(android.R.id.content), "You have clicked on settings", Snackbar.LENGTH_LONG)
+        if (item.getItemId() == R.id.action_settings) {
+            Intent myIntent = new Intent(MainActivity.this, SettingsActivity.class);
+            MainActivity.this.startActivity(myIntent);
+            /*Snackbar.make(getWindow().getDecorView().findViewById(android.R.id.content), "You have clicked on settings", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();*/
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
+            return true;
         }
+        return super.onOptionsItemSelected(item);
+    }
+
+    static public void fabGreen(View view) {
+        view.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN));
+        Snackbar.make(view, "Successfully received a response from Shop Server", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
+    }
+
+    static public void fabRed(View view) {
+        view.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
+        Snackbar.make(view, "Can't get a response from server", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
     }
 }

@@ -5,6 +5,7 @@ import android.os.Build;
 import android.util.Log;
 import android.view.View;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
 import com.android.volley.Request;
@@ -84,8 +85,10 @@ public class ItemsRequest {
      return true;
  }*/
 
-
-    public Boolean templateRequest(String shortUrl, View view, Method jsonHandleFunction) {
+    public Boolean templateRequest(String shortUrl,Method jsonHandleFunction){
+        return templateRequest(shortUrl, jsonHandleFunction, null, null, null);
+    }
+    public Boolean templateRequest(String shortUrl, Method jsonHandleFunction, @Nullable View view, @Nullable Method ifSuccessful, @Nullable Method ifFailure) {
         String fullUrl = String.format("http://192.168.0.102:8080/%s", shortUrl);
         final Boolean[] result = {null};
         StringRequest stringRequest = new StringRequest(Request.Method.GET, fullUrl,
@@ -93,15 +96,23 @@ public class ItemsRequest {
                     try {
                         JSONObject jsonObject = new JSONObject(response);
                         result[0] = (Boolean) jsonHandleFunction.invoke(null, jsonObject);
-                        if (result[0])
+                        if (result[0]){
+                            Log.d("Response", jsonObject.toString());
+                            if (ifSuccessful != null )
+                                ifSuccessful.invoke(null, view);
+
+
+                        }
                         /* Snackbar.make(view, jsonObject.toString(), Snackbar.LENGTH_LONG)
                                  .setAction("Action", null).show();*/
-                            Log.d("Response", jsonObject.toString());
+
                         else {
                             String text = String.format("JSONObject has invalid format for request %s", fullUrl);
                          /*Snackbar.make(view, text, Snackbar.LENGTH_LONG)
                                  .setAction("Action", null).show();*/
                             Log.d("Response", text);
+                            if (ifFailure != null )
+                                ifFailure.invoke(null, view);
                         }
 
 
@@ -110,8 +121,13 @@ public class ItemsRequest {
                     }
                 }, error -> {
             Log.d("Response", "That didn't work!");
-                 /*Snackbar.make(view, "Can't get a response from server", Snackbar.LENGTH_LONG)
-                         .setAction("Action", null).show();*/
+            if (ifFailure != null )
+               try {
+                   ifFailure.invoke(null, view);
+               }
+            catch (Exception e){
+                   e.printStackTrace();
+            }
         });
         requestQueue.add(stringRequest);
         return result[0];
