@@ -53,7 +53,7 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
                 //itemsRequest.request();
                 //itemsRequest.singleItem();
                 try {
-                    itemsRequest.templateRequest("api/check-alive", ItemsRequest.class.getMethod("checkServerAlive", JSONObject.class ));
+                    itemsRequest.templateRequest(null, "api/check-alive", ItemsRequest.class.getMethod("checkServerAlive", JSONObject.class ));
                 } catch (NoSuchMethodException e) {
                     e.printStackTrace();
                 }

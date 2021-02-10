@@ -28,10 +28,12 @@ public class ItemsRequest {
     private static Context context;
     private static ItemsRequest instance;
     private RequestQueue requestQueue;
+    private Boolean serverOnline;
 
     public ItemsRequest(Context context) {
         this.context = context;
         requestQueue = getRequestQueue();
+        serverOnline = null;
     }
 
     public static synchronized ItemsRequest getInstance(Context context) {
@@ -85,21 +87,22 @@ public class ItemsRequest {
      return true;
  }*/
 
-    public Boolean templateRequest(String shortUrl,Method jsonHandleFunction){
-        return templateRequest(shortUrl, jsonHandleFunction, null, null, null);
+    public Boolean templateRequest(@Nullable Object object, String shortUrl,Method jsonHandleFunction){
+        return templateRequest(object, shortUrl, jsonHandleFunction, null, null, null);
     }
-    public Boolean templateRequest(String shortUrl, Method jsonHandleFunction, @Nullable View view, @Nullable Method ifSuccessful, @Nullable Method ifFailure) {
+    public Boolean templateRequest(@Nullable Object object, String shortUrl, Method jsonHandleFunction, @Nullable View view, @Nullable Method ifSuccessful, @Nullable Method ifFailure) {
         String fullUrl = String.format("http://192.168.0.102:8080/%s", shortUrl);
         final Boolean[] result = {null};
         StringRequest stringRequest = new StringRequest(Request.Method.GET, fullUrl,
                 response -> {
                     try {
                         JSONObject jsonObject = new JSONObject(response);
-                        result[0] = (Boolean) jsonHandleFunction.invoke(null, jsonObject);
+                        result[0] = (Boolean) jsonHandleFunction.invoke(object, jsonObject);
                         if (result[0]){
+                            serverOnline = true;
                             Log.d("Response", jsonObject.toString());
                             if (ifSuccessful != null )
-                                ifSuccessful.invoke(null, view);
+                                ifSuccessful.invoke(object, view);
 
 
                         }
@@ -112,7 +115,7 @@ public class ItemsRequest {
                                  .setAction("Action", null).show();*/
                             Log.d("Response", text);
                             if (ifFailure != null )
-                                ifFailure.invoke(null, view);
+                                ifFailure.invoke(object, view);
                         }
 
 
@@ -120,10 +123,11 @@ public class ItemsRequest {
                         e.printStackTrace();
                     }
                 }, error -> {
+            serverOnline = false;
             Log.d("Response", "That didn't work!");
             if (ifFailure != null )
                try {
-                   ifFailure.invoke(null, view);
+                   ifFailure.invoke(object, view);
                }
             catch (Exception e){
                    e.printStackTrace();
@@ -143,6 +147,10 @@ public class ItemsRequest {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public Boolean getServerOnline() {
+        return serverOnline;
     }
 
 /*public boolean singleItem(){

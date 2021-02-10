@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(view -> {
             ItemsRequest itemsRequest = ItemsRequest.getInstance(view.getContext());
             try {
-                itemsRequest.templateRequest(
+                itemsRequest.templateRequest(this,
                         "api/check-alive",
                         ItemsRequest.class.getMethod("checkServerAlive", JSONObject.class),
                         view,
@@ -89,15 +89,17 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    static public void fabGreen(View view) {
+     public void fabGreen(View view) {
         view.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN));
         Snackbar.make(view, "Successfully received a response from Shop Server", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
+         ((NavigationView) findViewById(R.id.nav_view)).getMenu().findItem(R.id.nav_item).setEnabled(true);
     }
 
-    static public void fabRed(View view) {
+     public void fabRed(View view) {
         view.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
         Snackbar.make(view, "Can't get a response from server", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
+         ((NavigationView) findViewById(R.id.nav_view)).getMenu().findItem(R.id.nav_item).setEnabled(false);
     }
 }
