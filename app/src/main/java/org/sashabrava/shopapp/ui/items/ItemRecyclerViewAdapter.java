@@ -1,24 +1,28 @@
-package org.sashabrava.shopapp.ui;
+package org.sashabrava.shopapp.ui.items;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.google.android.material.snackbar.Snackbar;
-import com.google.gson.JsonObject;
 
 import org.json.JSONObject;
 import org.sashabrava.shopapp.R;
 
 import org.sashabrava.shopapp.server.ItemsRequest;
 import org.sashabrava.shopapp.ui.dummy.DummyContent.DummyItem;
+import org.sashabrava.shopapp.ui.item.SingleItemFragment;
 
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DummyItem}.
@@ -47,16 +51,10 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Snackbar.make(v, mValues.get(position).details, Snackbar.LENGTH_LONG)
-                //        .setAction("Action", null).show();
-                ItemsRequest itemsRequest = ItemsRequest.getInstance(v.getContext());
-                //itemsRequest.request();
-                //itemsRequest.singleItem();
-                try {
-                    itemsRequest.templateRequest(null, "api/check-alive", ItemsRequest.class.getMethod("checkServerAlive", JSONObject.class ));
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                }
+                Bundle bundle = new Bundle();
+                bundle.putString("id", "1");
+                NavController navController = Navigation.findNavController((AppCompatActivity) v.getContext(), R.id.nav_host_fragment);
+                navController.navigate(R.id.nav_single_item, bundle);
             }
         });
     }

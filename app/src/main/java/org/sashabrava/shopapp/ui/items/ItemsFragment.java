@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import org.sashabrava.shopapp.R;
-import org.sashabrava.shopapp.ui.ItemRecyclerViewAdapter;
 import org.sashabrava.shopapp.ui.dummy.DummyContent;
 
 /**
