@@ -8,13 +8,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.gson.JsonObject;
 
+import org.json.JSONObject;
 import org.sashabrava.shopapp.R;
 
 import org.sashabrava.shopapp.server.ItemsRequest;
 import org.sashabrava.shopapp.ui.dummy.DummyContent.DummyItem;
 
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link DummyItem}.
@@ -43,11 +46,16 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Snackbar.make(v, mValues.get(position).details, Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-                ItemsRequest itemsRequest = new ItemsRequest(v);
+                //Snackbar.make(v, mValues.get(position).details, Snackbar.LENGTH_LONG)
+                //        .setAction("Action", null).show();
+                ItemsRequest itemsRequest = ItemsRequest.getInstance(v.getContext());
                 //itemsRequest.request();
-                itemsRequest.singleItem();
+                //itemsRequest.singleItem();
+                try {
+                    itemsRequest.templateRequest("api/check-alive", v, ItemsRequest.class.getMethod("checkServerAlive", JSONObject.class ));
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

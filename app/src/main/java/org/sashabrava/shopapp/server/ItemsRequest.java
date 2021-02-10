@@ -1,8 +1,11 @@
 package org.sashabrava.shopapp.server;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 import android.view.View;
+
+import androidx.annotation.RequiresApi;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -17,13 +20,38 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.sashabrava.shopapp.models.Item;
 
+import java.lang.reflect.Method;
+import java.util.function.Function;
+
 public class ItemsRequest {
-    View view;
-    public ItemsRequest(View view){
-        this.view = view;
+    private static Context context;
+    private static ItemsRequest instance;
+    private RequestQueue requestQueue;
+
+    public ItemsRequest(Context context) {
+        this.context = context;
+        requestQueue = getRequestQueue();
     }
- public boolean request(){
-     RequestQueue queue = Volley.newRequestQueue(view.getContext());
+
+    public static synchronized ItemsRequest getInstance(Context context) {
+        if (instance == null) {
+            instance = new ItemsRequest(context);
+        }
+        return instance;
+    }
+
+    public RequestQueue getRequestQueue() {
+        if (requestQueue == null) {
+            // getApplicationContext() is key, it keeps you from leaking the
+            // Activity or BroadcastReceiver if someone passes one in.
+            requestQueue = Volley.newRequestQueue(context.getApplicationContext());
+        }
+        return requestQueue;
+    }
+
+
+    /*public boolean request(){
+     //RequestQueue queue = Volley.newRequestQueue(view.getContext());
      String url ="http://192.168.0.102:8080/api";
 
 // Request a string response from the provided URL.
@@ -52,10 +80,56 @@ public class ItemsRequest {
      });
 
 // Add the request to the RequestQueue.
-     queue.add(stringRequest);
+        queue.add(stringRequest);
      return true;
- }
-public boolean singleItem(){
+ }*/
+
+
+    public Boolean templateRequest(String shortUrl, View view, Method jsonHandleFunction) {
+        String fullUrl = String.format("http://192.168.0.102:8080/%s", shortUrl);
+        final Boolean[] result = {null};
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, fullUrl,
+                response -> {
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        result[0] = (Boolean) jsonHandleFunction.invoke(null, jsonObject);
+                        if (result[0])
+                        /* Snackbar.make(view, jsonObject.toString(), Snackbar.LENGTH_LONG)
+                                 .setAction("Action", null).show();*/
+                            Log.d("Response", jsonObject.toString());
+                        else {
+                            String text = String.format("JSONObject has invalid format for request %s", fullUrl);
+                         /*Snackbar.make(view, text, Snackbar.LENGTH_LONG)
+                                 .setAction("Action", null).show();*/
+                            Log.d("Response", text);
+                        }
+
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }, error -> {
+            Log.d("Response", "That didn't work!");
+                 /*Snackbar.make(view, "Can't get a response from server", Snackbar.LENGTH_LONG)
+                         .setAction("Action", null).show();*/
+        });
+        requestQueue.add(stringRequest);
+        return result[0];
+    }
+
+    static public boolean checkServerAlive(JSONObject jsonObject) {
+        try {
+            if (jsonObject.get("status").equals("Running")) {
+                return true;
+            }
+            return false;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+/*public boolean singleItem(){
     RequestQueue queue = Volley.newRequestQueue(view.getContext());
     String url ="http://192.168.0.102:8080/api/items/1";
     StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -87,5 +161,5 @@ public boolean singleItem(){
     });
     queue.add(stringRequest);
     return true;
-}
+}*/
 }
