@@ -1,4 +1,4 @@
-ShopApp is an Android application, which can communicate with Shop Server.
+TestShopApp is an Android application, which can communicate with TestShopServer.
 
 ## Planned features
 
