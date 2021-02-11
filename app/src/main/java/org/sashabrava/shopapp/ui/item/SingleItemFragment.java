@@ -12,13 +12,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
 
 import org.json.JSONObject;
 import org.sashabrava.shopapp.MainActivity;
 import org.sashabrava.shopapp.R;
+import org.sashabrava.shopapp.models.Item;
 import org.sashabrava.shopapp.server.ItemsRequest;
+
+import java.util.Locale;
+import java.util.Objects;
 
 public class SingleItemFragment extends Fragment {
 
@@ -39,40 +44,60 @@ public class SingleItemFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(SingleItemViewModel.class);
-        // TODO: Use the ViewModel
         checkBundle();
     }
     private boolean checkBundle(){
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             String bundleID = bundle.getString("id", "Value not specified");
-            try {int itemID = Integer.parseInt(bundleID);
-
+            try {
+                int itemID = Integer.parseInt(bundleID);
+                Log.d("Bundle Single Item", String.format("Successfully received ID %d", itemID));
                 return getData(itemID);
             }
             catch (NumberFormatException e){
                 e.printStackTrace();
             }
         }
-            Snackbar.make(getView(), "You have opened Fragment without Item ID, therefore it can't be displayed", Snackbar.LENGTH_LONG)
+        String text = "You have opened Fragment without Item ID, therefore it can't be displayed";
+        Log.d("Bundle Single Item", text);
+            Snackbar.make(getView(), text, Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
         return false;
     }
     private boolean getData(int itemID){
         ItemsRequest itemsRequest = ItemsRequest.getInstance(getContext());
-        /*try {
+        String shortUrl = String.format(Locale.getDefault(),"api/items/%d", itemID);
+        try {
             itemsRequest.templateRequest(this,
-                    "api/check-alive",
-                    ItemsRequest.class.getMethod("checkServerAlive", JSONObject.class),
+                    shortUrl,
+                    ItemsRequest.class.getMethod("checkItemJson", JSONObject.class),
                     getView(),
-                    MainActivity.class.getMethod("fabGreen", View.class),
-                    MainActivity.class.getMethod("fabRed", View.class)
+                    SingleItemFragment.class.getMethod("onItemReceived", View.class, Object.class),
+                    SingleItemFragment.class.getMethod("onItemError", View.class, String.class)
             );
             return true;
         } catch (NoSuchMethodException e) {
             e.printStackTrace();
-        }*/
+        }
        return false;
+    }
+    public void onItemReceived(View view, Object object){
+        if (object instanceof Item){
+            mViewModel.setItem((Item)object);
+            ((TextView) view.findViewById(R.id.single_item_id)).setText(String.format(Locale.getDefault(), "%d", mViewModel.getItem().getId()));
+            ((TextView) view.findViewById(R.id.single_item_title)).setText(mViewModel.getItem().getTitle());
+            ((TextView) view.findViewById(R.id.single_item_description)).setText(mViewModel.getItem().getDescription());
+            Snackbar.make(requireView(), "Single Item Successfully received", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+        }
+        Log.d("Fragment Single Item", object.toString());
+
+    }
+    public void onItemError(View view, String errorText){
+        Snackbar.make(view, errorText, Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
+
     }
 
 }
