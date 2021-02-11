@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,6 +24,8 @@ import com.google.android.material.snackbar.Snackbar;
 import org.json.JSONObject;
 import org.sashabrava.shopapp.server.ItemsRequest;
 
+import java.util.Map;
+
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
@@ -41,8 +44,8 @@ public class MainActivity extends AppCompatActivity {
                         "api/check-alive",
                         ItemsRequest.class.getMethod("checkServerAlive", JSONObject.class),
                         view,
-                        MainActivity.class.getMethod("fabGreen", View.class),
-                        MainActivity.class.getMethod("fabRed", View.class)
+                        MainActivity.class.getMethod("fabGreen", View.class, Object.class),
+                        MainActivity.class.getMethod("fabRed", View.class, String.class)
                 );
             } catch (NoSuchMethodException e) {
                 e.printStackTrace();
@@ -89,16 +92,16 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-     public void fabGreen(View view) {
+     public void fabGreen(View view, Object object) {
         view.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN));
         Snackbar.make(view, "Successfully received a response from Shop Server", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
          ((NavigationView) findViewById(R.id.nav_view)).getMenu().findItem(R.id.nav_item).setEnabled(true);
     }
 
-     public void fabRed(View view) {
+     public void fabRed(View view, String errorText) {
         view.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
-        Snackbar.make(view, "Can't get a response from server", Snackbar.LENGTH_LONG)
+        Snackbar.make(view, errorText, Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
          ((NavigationView) findViewById(R.id.nav_view)).getMenu().findItem(R.id.nav_item).setEnabled(false);
     }

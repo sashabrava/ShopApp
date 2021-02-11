@@ -13,7 +13,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.snackbar.Snackbar;
+
+import org.json.JSONObject;
+import org.sashabrava.shopapp.MainActivity;
 import org.sashabrava.shopapp.R;
+import org.sashabrava.shopapp.server.ItemsRequest;
 
 public class SingleItemFragment extends Fragment {
 
@@ -26,10 +31,7 @@ public class SingleItemFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        Bundle bundle = this.getArguments();
-        if (bundle != null) {
-            Log.d("bundle.single.item", bundle.getString("id", "Value is unknown"));
-         }
+
         return inflater.inflate(R.layout.single_item_fragment, container, false);
     }
 
@@ -38,6 +40,39 @@ public class SingleItemFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(SingleItemViewModel.class);
         // TODO: Use the ViewModel
+        checkBundle();
+    }
+    private boolean checkBundle(){
+        Bundle bundle = this.getArguments();
+        if (bundle != null) {
+            String bundleID = bundle.getString("id", "Value not specified");
+            try {int itemID = Integer.parseInt(bundleID);
+
+                return getData(itemID);
+            }
+            catch (NumberFormatException e){
+                e.printStackTrace();
+            }
+        }
+            Snackbar.make(getView(), "You have opened Fragment without Item ID, therefore it can't be displayed", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null).show();
+        return false;
+    }
+    private boolean getData(int itemID){
+        ItemsRequest itemsRequest = ItemsRequest.getInstance(getContext());
+        /*try {
+            itemsRequest.templateRequest(this,
+                    "api/check-alive",
+                    ItemsRequest.class.getMethod("checkServerAlive", JSONObject.class),
+                    getView(),
+                    MainActivity.class.getMethod("fabGreen", View.class),
+                    MainActivity.class.getMethod("fabRed", View.class)
+            );
+            return true;
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }*/
+       return false;
     }
 
 }
