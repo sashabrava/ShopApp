@@ -9,6 +9,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,12 +33,12 @@ import java.util.Locale;
  */
 public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerViewAdapter.ViewHolder> {
 
-   /* private final List<DummyItem> mValues;
+    /* private final List<DummyItem> mValues;
 
-    public ItemRecyclerViewAdapter(List<DummyItem> items) {
-        mValues = items;
-    }*/
-   private final List<Item> mValues;
+     public ItemRecyclerViewAdapter(List<DummyItem> items) {
+         mValues = items;
+     }*/
+    private final List<Item> mValues;
 
     public ItemRecyclerViewAdapter(List<Item> items) {
         mValues = items;
@@ -53,15 +54,26 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(String.format(Locale.getDefault(), "%d",mValues.get(position).getId()));
-        holder.mContentView.setText(mValues.get(position).getTitle());
-        holder.itemView.setOnClickListener(v -> {
-            Bundle bundle = new Bundle();
-            bundle.putInt("id", mValues.get(position).getId());
-            NavController navController = Navigation.findNavController((AppCompatActivity) v.getContext(), R.id.nav_host_fragment);
-            navController.navigate(R.id.nav_single_item, bundle);
-        });
+
+        if (holder.mItem.getId() != ItemsFragment.ITEMS_HEADER_ID) {
+            holder.mContentView.setText(mValues.get(position).getTitle());
+            holder.mIdView.setText(String.format(Locale.getDefault(), "%d", mValues.get(position).getId()));
+
+            holder.itemView.setOnClickListener(v -> {
+                Bundle bundle = new Bundle();
+                bundle.putInt("id", mValues.get(position).getId());
+                NavController navController = Navigation.findNavController((AppCompatActivity) v.getContext(), R.id.nav_host_fragment);
+                navController.navigate(R.id.nav_single_item, bundle);
+            });
+        } else {
+            holder.mIdView.setText("Item id");
+            holder.mContentView.setText("Item title");
+            holder.mIdView.setTextColor(Color.GRAY);
+            holder.mContentView.setTextColor(Color.GRAY);
+        }
+
     }
+
 
     @Override
     public int getItemCount() {

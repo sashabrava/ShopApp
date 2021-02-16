@@ -22,11 +22,16 @@ public class Item {
     public void setTitle(String name) {
         this.title = name;
     }
+
     public String getDescription() {
         return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Item(int id) {
+        this.id = id;
     }
 }

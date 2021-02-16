@@ -34,7 +34,7 @@ public class ItemsFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-
+static public int ITEMS_HEADER_ID = -1;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -88,21 +88,21 @@ public class ItemsFragment extends Fragment {
             } catch (NoSuchMethodException e) {
                 e.printStackTrace();
             }
-
-            List<Item> itemList = new ArrayList<>();
-            //recyclerView.setAdapter(new ItemRecyclerViewAdapter(DummyContent.ITEMS));
         }
         return view;
     }
-    public void onSuccessfulItemsRequest(View view, Object object){
- if (object instanceof Item[]){
-     Item[] items = (Item[])object;
-     RecyclerView recyclerView = (RecyclerView) view;
-     recyclerView.setAdapter((new ItemRecyclerViewAdapter(new ArrayList<Item>(Arrays.asList(items)))));
 
- }
+    public void onSuccessfulItemsRequest(View view, Object object) {
+        if (object instanceof Item[]) {
+            Item[] items = (Item[]) object;
+            RecyclerView recyclerView = (RecyclerView) view;
+            ArrayList<Item> arrayListItem = new ArrayList<>(Arrays.asList(items));
+            arrayListItem.add(0, new Item(ITEMS_HEADER_ID));
+            recyclerView.setAdapter((new ItemRecyclerViewAdapter(arrayListItem)));
+        }
     }
-    public void onFailureItemsRequest(View view, String errorText){
+
+    public void onFailureItemsRequest(View view, String errorText) {
         Snackbar.make(view, errorText, Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
     }
