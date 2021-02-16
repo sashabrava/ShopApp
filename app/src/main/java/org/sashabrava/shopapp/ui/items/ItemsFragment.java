@@ -12,8 +12,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.snackbar.Snackbar;
+
+import org.json.JSONObject;
+import org.sashabrava.shopapp.MainActivity;
 import org.sashabrava.shopapp.R;
+import org.sashabrava.shopapp.models.Item;
+import org.sashabrava.shopapp.server.ItemsRequest;
 import org.sashabrava.shopapp.ui.dummy.DummyContent;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A fragment representing a list of Items.
@@ -65,8 +75,35 @@ public class ItemsFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new ItemRecyclerViewAdapter(DummyContent.ITEMS));
+            ItemsRequest itemsRequest = ItemsRequest.getInstance(view.getContext());
+            try {
+                itemsRequest.templateRequest(this,
+                        "api/items",
+                        ItemsRequest.class.getMethod("getItemsJson", String.class),
+                        view,
+                        ItemsFragment.class.getMethod("onSuccessfulItemsRequest", View.class, Object.class),
+                        //MainActivity.class.getMethod("fabGreen", View.class, Object.class),
+                        ItemsFragment.class.getMethod("onFailureItemsRequest", View.class, String.class)
+                );
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+
+            List<Item> itemList = new ArrayList<>();
+            //recyclerView.setAdapter(new ItemRecyclerViewAdapter(DummyContent.ITEMS));
         }
         return view;
+    }
+    public void onSuccessfulItemsRequest(View view, Object object){
+ if (object instanceof Item[]){
+     Item[] items = (Item[])object;
+     RecyclerView recyclerView = (RecyclerView) view;
+     recyclerView.setAdapter((new ItemRecyclerViewAdapter(new ArrayList<Item>(Arrays.asList(items)))));
+
+ }
+    }
+    public void onFailureItemsRequest(View view, String errorText){
+        Snackbar.make(view, errorText, Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
     }
 }

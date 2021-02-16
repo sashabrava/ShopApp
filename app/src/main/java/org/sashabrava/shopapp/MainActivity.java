@@ -42,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 itemsRequest.templateRequest(this,
                         "api/check-alive",
-                        ItemsRequest.class.getMethod("checkServerAlive", JSONObject.class),
+                        ItemsRequest.class.getMethod("checkServerAlive", String.class),
                         view,
                         MainActivity.class.getMethod("fabGreen", View.class, Object.class),
                         MainActivity.class.getMethod("fabRed", View.class, String.class)

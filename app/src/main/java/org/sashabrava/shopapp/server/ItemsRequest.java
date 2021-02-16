@@ -13,11 +13,13 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.sashabrava.shopapp.models.Item;
 
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.Locale;
 
 public class ItemsRequest {
@@ -53,8 +55,8 @@ public class ItemsRequest {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, fullUrl,
                 response -> {
                     try {
-                        JSONObject jsonObject = new JSONObject(response);
-                        Object resultObject = jsonHandleFunction.invoke(object, jsonObject);
+                        //JSONObject jsonObject = new JSONObject(response);
+                        Object resultObject = jsonHandleFunction.invoke(object, response);
                         Pair<Integer, Object> result = new Pair<>(STATUS_UNKNOWN, null);
                         if (resultObject instanceof Pair) {
                             Pair<?, ?> uncheckedPair = (Pair<?, ?>) resultObject;
@@ -93,8 +95,9 @@ public class ItemsRequest {
         requestQueue.add(stringRequest);
     }
 
-    static public Pair<Integer, Object> checkServerAlive(JSONObject jsonObject) {
+    static public Pair<Integer, Object> checkServerAlive(String response) {
         try {
+            JSONObject jsonObject = new JSONObject(response);
             if (jsonObject.get("status").equals("Running")) {
                 return new Pair<>(STATUS_SUCCESS, null);
             }
@@ -104,11 +107,21 @@ public class ItemsRequest {
         return new Pair<>(STATUS_UNEXPECTED_SERVER_REPLY, null);
     }
 
-    static public Pair<Integer, Object> checkItemJson(JSONObject jsonObject) {
+    static public Pair<Integer, Object> getItemJson(String response) {
         try {
             Gson gson = new Gson();
-            Item item = gson.fromJson(jsonObject.toString(), Item.class);
+            Item item = gson.fromJson(response, Item.class);
             return new Pair<>(STATUS_SUCCESS, item);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new Pair<>(STATUS_UNEXPECTED_SERVER_REPLY, null);
+    }
+    static public Pair<Integer, Object> getItemsJson(String response) {
+        try {
+            Gson gson = new Gson();
+            Item[] items = gson.fromJson(response, Item[].class);
+            return new Pair<>(STATUS_SUCCESS, items);
         } catch (Exception e) {
             e.printStackTrace();
         }

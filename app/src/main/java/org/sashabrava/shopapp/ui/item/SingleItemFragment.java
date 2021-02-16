@@ -16,14 +16,11 @@ import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
 
-import org.json.JSONObject;
-import org.sashabrava.shopapp.MainActivity;
 import org.sashabrava.shopapp.R;
 import org.sashabrava.shopapp.models.Item;
 import org.sashabrava.shopapp.server.ItemsRequest;
 
 import java.util.Locale;
-import java.util.Objects;
 
 public class SingleItemFragment extends Fragment {
 
@@ -71,7 +68,7 @@ public class SingleItemFragment extends Fragment {
         try {
             itemsRequest.templateRequest(this,
                     shortUrl,
-                    ItemsRequest.class.getMethod("checkItemJson", JSONObject.class),
+                    ItemsRequest.class.getMethod("getItemJson", String.class),
                     getView(),
                     SingleItemFragment.class.getMethod("onItemReceived", View.class, Object.class),
                     SingleItemFragment.class.getMethod("onItemError", View.class, String.class)
