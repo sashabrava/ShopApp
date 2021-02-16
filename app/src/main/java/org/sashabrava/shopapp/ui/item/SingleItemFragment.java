@@ -46,15 +46,12 @@ public class SingleItemFragment extends Fragment {
     private boolean checkBundle(){
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            String bundleID = bundle.getString("id", "Value not specified");
-            try {
-                int itemID = Integer.parseInt(bundleID);
-                Log.d("Bundle Single Item", String.format("Successfully received ID %d", itemID));
-                return getData(itemID);
+            int bundleID = bundle.getInt("id", -1);
+            if (bundleID > -1) {
+                Log.d("Bundle Single Item", String.format("Successfully received ID %d", bundleID));
+                return getData(bundleID);
             }
-            catch (NumberFormatException e){
-                e.printStackTrace();
-            }
+
         }
         String text = "You have opened Fragment without Item ID, therefore it can't be displayed";
         Log.d("Bundle Single Item", text);
@@ -62,6 +59,7 @@ public class SingleItemFragment extends Fragment {
                     .setAction("Action", null).show();
         return false;
     }
+
     private boolean getData(int itemID){
         ItemsRequest itemsRequest = ItemsRequest.getInstance(getContext());
         String shortUrl = String.format(Locale.getDefault(),"api/items/%d", itemID);

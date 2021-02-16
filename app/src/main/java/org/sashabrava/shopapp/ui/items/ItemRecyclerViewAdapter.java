@@ -55,14 +55,11 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(String.format(Locale.getDefault(), "%d",mValues.get(position).getId()));
         holder.mContentView.setText(mValues.get(position).getTitle());
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Bundle bundle = new Bundle();
-                bundle.putString("id", "1");
-                NavController navController = Navigation.findNavController((AppCompatActivity) v.getContext(), R.id.nav_host_fragment);
-                navController.navigate(R.id.nav_single_item, bundle);
-            }
+        holder.itemView.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putInt("id", mValues.get(position).getId());
+            NavController navController = Navigation.findNavController((AppCompatActivity) v.getContext(), R.id.nav_host_fragment);
+            navController.navigate(R.id.nav_single_item, bundle);
         });
     }
 
