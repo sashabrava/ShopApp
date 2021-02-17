@@ -1,11 +1,13 @@
 package org.sashabrava.shopapp.server;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 
 import androidx.annotation.Nullable;
+import androidx.preference.PreferenceManager;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -28,9 +30,10 @@ public class ItemsRequest {
     static Integer STATUS_SUCCESS = 10;
     static Integer STATUS_UNEXPECTED_SERVER_REPLY = 12;
     static Integer STATUS_UNKNOWN = 14;
+    Context context;
 
     public ItemsRequest(Context context) {
-        //this.context = context;
+        this.context = context;
         requestQueue = getRequestQueue(context);
     }
 
@@ -50,8 +53,15 @@ public class ItemsRequest {
         return requestQueue;
     }
 
-    public void templateRequest(@Nullable Object object, String shortUrl, Method jsonHandleFunction, @Nullable View view, @Nullable Method ifSuccessful, @Nullable Method ifFailure) {
-        String fullUrl = String.format("http://192.168.0.102:8080/%s", shortUrl);
+    public void templateRequest(@Nullable Object object, String shortUrl, Method jsonHandleFunction,  View view, @Nullable Method ifSuccessful, @Nullable Method ifFailure) {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(view.getContext());
+        boolean http = sharedPreferences.getBoolean("http", true);
+        String serverPath = sharedPreferences.getString("server_path", "");
+        String serverPort = sharedPreferences.getString("server_port", "8080");
+        String fullUrl = String.format(
+                "%s://%s:%s/%s", http ? "http" : "https",
+                serverPath, serverPort, shortUrl);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, fullUrl,
                 response -> {
                     try {
