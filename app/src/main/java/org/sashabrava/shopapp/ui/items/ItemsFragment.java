@@ -34,7 +34,8 @@ public class ItemsFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
-static public int ITEMS_HEADER_ID = -1;
+    static public int ITEMS_HEADER_ID = -1;
+
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -82,7 +83,6 @@ static public int ITEMS_HEADER_ID = -1;
                         ItemsRequest.class.getMethod("getItemsJson", String.class),
                         view,
                         ItemsFragment.class.getMethod("onSuccessfulItemsRequest", View.class, Object.class),
-                        //MainActivity.class.getMethod("fabGreen", View.class, Object.class),
                         ItemsFragment.class.getMethod("onFailureItemsRequest", View.class, String.class)
                 );
             } catch (NoSuchMethodException e) {

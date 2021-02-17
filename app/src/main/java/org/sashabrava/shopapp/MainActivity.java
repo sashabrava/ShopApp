@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,10 +20,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
-import org.json.JSONObject;
 import org.sashabrava.shopapp.server.ItemsRequest;
-
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 

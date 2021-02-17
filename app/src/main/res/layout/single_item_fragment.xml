@@ -11,17 +11,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/single_item_id"
-        android:text="ID" />
+        android:text="@string/textview_single_item_id" />
 
     <TextView
         android:id="@+id/single_item_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Title" />
+        android:text="@string/textview_single_item_title" />
         <TextView
             android:id="@+id/single_item_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Description" />
+            android:text="@string/textview_single_item_description" />
 
 </LinearLayout>

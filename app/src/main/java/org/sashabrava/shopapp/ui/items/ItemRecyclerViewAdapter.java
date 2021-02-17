@@ -28,16 +28,10 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem}.
- * TODO: Replace the implementation with code for your data type.
+ * {@link RecyclerView.Adapter} that can display a {@link Item}.
  */
 public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerViewAdapter.ViewHolder> {
 
-    /* private final List<DummyItem> mValues;
-
-     public ItemRecyclerViewAdapter(List<DummyItem> items) {
-         mValues = items;
-     }*/
     private final List<Item> mValues;
 
     public ItemRecyclerViewAdapter(List<Item> items) {
@@ -66,8 +60,8 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
                 navController.navigate(R.id.nav_single_item, bundle);
             });
         } else {
-            holder.mIdView.setText("Item id");
-            holder.mContentView.setText("Item title");
+            holder.mIdView.setText(R.string.single_item_fragment_header_id);
+            holder.mContentView.setText(R.string.single_item_fragment_header_title);
             holder.mIdView.setTextColor(Color.GRAY);
             holder.mContentView.setTextColor(Color.GRAY);
         }
@@ -84,14 +78,13 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
         public final View mView;
         public final TextView mIdView;
         public final TextView mContentView;
-        //public DummyItem mItem;
         public Item mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mIdView = view.findViewById(R.id.item_number);
+            mContentView = view.findViewById(R.id.content);
         }
 
         @Override

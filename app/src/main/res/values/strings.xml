@@ -26,4 +26,9 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="single_item_fragment_header_title">Item title</string>
+    <string name="single_item_fragment_header_id">Item id</string>
+    <string name="textview_single_item_id">ID</string>
+    <string name="textview_single_item_title">Title</string>
+    <string name="textview_single_item_description">Description</string>
 </resources>
