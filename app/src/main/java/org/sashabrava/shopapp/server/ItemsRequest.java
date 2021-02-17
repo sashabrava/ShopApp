@@ -85,6 +85,7 @@ public class ItemsRequest {
                 }, error -> {
             String text = "Request couldn't be resolved, ShopApp Server is down or can't process the request";
             Log.d("Response", text);
+            Log.d("Error.Response", error.toString());
             if (ifFailure != null)
                 try {
                     ifFailure.invoke(object, view, text);
