@@ -1,12 +1,8 @@
 package org.sashabrava.shopapp.ui.items;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
-import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.graphics.Color;
@@ -16,13 +12,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.json.JSONObject;
 import org.sashabrava.shopapp.R;
 
 import org.sashabrava.shopapp.models.Item;
-import org.sashabrava.shopapp.server.ItemsRequest;
-import org.sashabrava.shopapp.ui.dummy.DummyContent.DummyItem;
-import org.sashabrava.shopapp.ui.item.SingleItemFragment;
 
 import java.util.List;
 import java.util.Locale;
@@ -49,7 +41,7 @@ public class ItemRecyclerViewAdapter extends RecyclerView.Adapter<ItemRecyclerVi
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
 
-        if (holder.mItem.getId() != ItemsFragment.ITEMS_HEADER_ID) {
+        if (holder.mItem.getId() != ItemsViewModel.ITEMS_HEADER_ID) {
             holder.mContentView.setText(mValues.get(position).getTitle());
             holder.mIdView.setText(String.format(Locale.getDefault(), "%d", mValues.get(position).getId()));
 

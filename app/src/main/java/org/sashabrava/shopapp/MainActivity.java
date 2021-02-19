@@ -20,7 +20,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
-import org.sashabrava.shopapp.server.ItemsRequest;
+import org.sashabrava.shopapp.server.ServerRequest;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,14 +34,14 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> {
-            ItemsRequest itemsRequest = ItemsRequest.getInstance(view.getContext());
+            ServerRequest serverRequest = ServerRequest.getInstance(view.getContext());
             try {
-                itemsRequest.templateRequest(this,
+                serverRequest.templateRequest(this,
                         "api/check-alive",
-                        ItemsRequest.class.getMethod("checkServerAlive", String.class),
-                        view,
-                        MainActivity.class.getMethod("fabGreen", View.class, Object.class),
-                        MainActivity.class.getMethod("fabRed", View.class, String.class)
+                        ServerRequest.class.getMethod("checkServerAlive", String.class),
+                        getApplicationContext(),
+                        this.getClass().getMethod("fabGreen", Object.class),
+                        this.getClass().getMethod("fabRed", String.class)
                 );
             } catch (NoSuchMethodException e) {
                 e.printStackTrace();
@@ -88,16 +88,18 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-     public void fabGreen(View view, Object object) {
-        view.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN));
-        Snackbar.make(view, "Successfully received a response from Shop Server", Snackbar.LENGTH_LONG)
+     public void fabGreen(Object object) {
+         FloatingActionButton fab = findViewById(R.id.fab);
+         fab.setBackgroundTintList(ColorStateList.valueOf(Color.GREEN));
+        Snackbar.make(fab, "Successfully received a response from Shop Server", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
          ((NavigationView) findViewById(R.id.nav_view)).getMenu().findItem(R.id.nav_item).setEnabled(true);
     }
 
-     public void fabRed(View view, String errorText) {
-        view.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
-        Snackbar.make(view, errorText, Snackbar.LENGTH_LONG)
+     public void fabRed(String errorText) {
+         FloatingActionButton fab = findViewById(R.id.fab);
+         fab.setBackgroundTintList(ColorStateList.valueOf(Color.RED));
+        Snackbar.make(fab, errorText, Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
          ((NavigationView) findViewById(R.id.nav_view)).getMenu().findItem(R.id.nav_item).setEnabled(false);
     }

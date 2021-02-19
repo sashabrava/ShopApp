@@ -8,18 +8,31 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.google.android.material.snackbar.Snackbar;
+
 import org.sashabrava.shopapp.R;
+import org.sashabrava.shopapp.ui.ServerResultListener;
+import org.sashabrava.shopapp.ui.items.ItemRecyclerViewAdapter;
+import org.sashabrava.shopapp.ui.items.ItemsViewModel;
 
 public class HomeFragment extends Fragment {
+    HomeViewModel homeViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        HomeViewModel homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+
+        homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         final TextView textView = root.findViewById(R.id.text_home);
         homeViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        homeViewModel.getErrorText().observe(getViewLifecycleOwner(), s -> Snackbar.make(requireView(), homeViewModel.getErrorText().getValue(), Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show());
+        homeViewModel.getData(getContext());
         return root;
     }
+
 }

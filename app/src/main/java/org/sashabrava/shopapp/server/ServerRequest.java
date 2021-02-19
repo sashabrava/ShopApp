@@ -15,31 +15,29 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.sashabrava.shopapp.models.Item;
 
 import java.lang.reflect.Method;
-import java.util.List;
 import java.util.Locale;
 
-public class ItemsRequest {
-    private static ItemsRequest instance;
+public class ServerRequest {
+    private static ServerRequest instance;
     private RequestQueue requestQueue;
     static Integer STATUS_SUCCESS = 10;
     static Integer STATUS_UNEXPECTED_SERVER_REPLY = 12;
     static Integer STATUS_UNKNOWN = 14;
     Context context;
 
-    public ItemsRequest(Context context) {
+    private ServerRequest(Context context) {
         this.context = context;
         requestQueue = getRequestQueue(context);
     }
 
-    public static synchronized ItemsRequest getInstance(Context context) {
+    public static synchronized ServerRequest getInstance(Context context) {
         if (instance == null) {
-            instance = new ItemsRequest(context);
+            instance = new ServerRequest(context);
         }
         return instance;
     }
@@ -53,9 +51,9 @@ public class ItemsRequest {
         return requestQueue;
     }
 
-    public void templateRequest(@Nullable Object object, String shortUrl, Method jsonHandleFunction,  View view, @Nullable Method ifSuccessful, @Nullable Method ifFailure) {
+    public void templateRequest(@Nullable Object object, String shortUrl, Method jsonHandleFunction,  Context context, @Nullable Method ifSuccessful, @Nullable Method ifFailure) {
         SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(view.getContext());
+                PreferenceManager.getDefaultSharedPreferences(context);
         boolean http = sharedPreferences.getBoolean("http", true);
         String serverPath = sharedPreferences.getString("server_path", "");
         String serverPort = sharedPreferences.getString("server_port", "8080");
@@ -65,7 +63,6 @@ public class ItemsRequest {
         StringRequest stringRequest = new StringRequest(Request.Method.GET, fullUrl,
                 response -> {
                     try {
-                        //JSONObject jsonObject = new JSONObject(response);
                         Object resultObject = jsonHandleFunction.invoke(object, response);
                         Pair<Integer, Object> result = new Pair<>(STATUS_UNKNOWN, null);
                         if (resultObject instanceof Pair) {
@@ -82,12 +79,12 @@ public class ItemsRequest {
                         if (result.first.equals(STATUS_SUCCESS)) {
                             Log.d("Response", response);
                             if (ifSuccessful != null)
-                                ifSuccessful.invoke(object, view, result.second);
+                                ifSuccessful.invoke(object, result.second);
                         } else {
                             String text = String.format(Locale.getDefault(), "Couldn't process request %s, status code %d", fullUrl, result.first);
                             Log.d("Response", text);
                             if (ifFailure != null)
-                                ifFailure.invoke(object, view, text);
+                                ifFailure.invoke(object, text);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -98,7 +95,7 @@ public class ItemsRequest {
             Log.d("Error.Response", error.toString());
             if (ifFailure != null)
                 try {
-                    ifFailure.invoke(object, view, text);
+                    ifFailure.invoke(object, text);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -134,6 +131,17 @@ public class ItemsRequest {
             Item[] items = gson.fromJson(response, Item[].class);
             return new Pair<>(STATUS_SUCCESS, items);
         } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new Pair<>(STATUS_UNEXPECTED_SERVER_REPLY, null);
+    }
+    static public Pair<Integer, Object> getHomeText(String response) {
+        try {
+            JSONObject jsonObject = new JSONObject(response);
+            if (jsonObject.has("text")) {
+                return new Pair<>(STATUS_SUCCESS, jsonObject.get("text"));
+            }
+        } catch (JSONException e) {
             e.printStackTrace();
         }
         return new Pair<>(STATUS_UNEXPECTED_SERVER_REPLY, null);
