@@ -1,27 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/single_item_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/single_item_fragment"
-    tools:context=".ui.item.SingleItemFragment"
-    android:orientation="vertical">
+    tools:context=".ui.item.SingleItemFragment">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/single_item_id"
-        android:text="@string/textview_single_item_id" />
+    <TableRow android:padding="10dp">
 
-    <TextView
-        android:id="@+id/single_item_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/textview_single_item_title" />
         <TextView
-            android:id="@+id/single_item_description"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:text="@string/textview_single_item_id" />
+
+        <TextView
+            android:id="@+id/single_item_id"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.7"
+            android:textColor="@color/black" />
+    </TableRow>
+
+    <TableRow android:padding="10dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:text="@string/textview_single_item_title" />
+
+        <TextView
+            android:id="@+id/single_item_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.7"
+            android:textColor="@color/black" />
+    </TableRow>
+
+    <TableRow android:padding="10dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
             android:text="@string/textview_single_item_description" />
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/single_item_description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.7"
+            android:textColor="@color/black" />
+    </TableRow>
+</TableLayout>
