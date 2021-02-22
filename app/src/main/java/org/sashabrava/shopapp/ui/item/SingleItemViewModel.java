@@ -1,7 +1,6 @@
 package org.sashabrava.shopapp.ui.item;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.lifecycle.ViewModel;
 
@@ -10,6 +9,8 @@ import org.sashabrava.shopapp.server.ServerRequest;
 import org.sashabrava.shopapp.ui.ServerResultListener;
 
 import java.util.Locale;
+
+import timber.log.Timber;
 
 public class SingleItemViewModel extends ViewModel {
     private Item item;
@@ -49,7 +50,7 @@ public class SingleItemViewModel extends ViewModel {
             setItem((Item)object);
             serverResultListener.onSuccess();
         }
-        Log.d("Fragment Single Item", object.toString());
+        Timber.d(object.toString());
     }
     public void onItemError(String errorText){
         setErrorText(errorText);

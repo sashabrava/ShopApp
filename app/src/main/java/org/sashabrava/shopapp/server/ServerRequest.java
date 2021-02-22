@@ -2,9 +2,7 @@ package org.sashabrava.shopapp.server;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 import android.util.Pair;
-import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
@@ -21,6 +19,8 @@ import org.sashabrava.shopapp.models.Item;
 
 import java.lang.reflect.Method;
 import java.util.Locale;
+
+import timber.log.Timber;
 
 public class ServerRequest {
     private static ServerRequest instance;
@@ -77,12 +77,12 @@ public class ServerRequest {
                             result = new Pair<>(status, calculationsResultObject);
                         }
                         if (result.first.equals(STATUS_SUCCESS)) {
-                            Log.d("Response", response);
+                            Timber.d(response);
                             if (ifSuccessful != null)
                                 ifSuccessful.invoke(object, result.second);
                         } else {
                             String text = String.format(Locale.getDefault(), "Couldn't process request %s, status code %d", fullUrl, result.first);
-                            Log.d("Response", text);
+                            Timber.d(text);
                             if (ifFailure != null)
                                 ifFailure.invoke(object, text);
                         }
@@ -91,8 +91,8 @@ public class ServerRequest {
                     }
                 }, error -> {
             String text = "Request couldn't be resolved, ShopApp Server is down or can't process the request";
-            Log.d("Response", text);
-            Log.d("Error.Response", error.toString());
+            Timber.d(text);
+            Timber.d(error.toString());
             if (ifFailure != null)
                 try {
                     ifFailure.invoke(object, text);
